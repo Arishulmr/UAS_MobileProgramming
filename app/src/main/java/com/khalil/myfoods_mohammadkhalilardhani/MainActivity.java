@@ -1,5 +1,6 @@
 package com.khalil.myfoods_mohammadkhalilardhani;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,9 +50,8 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         foodApi = retrofit.create(FoodApi.class);
-
         // Set up the adapter
-        adapter = new FoodItemAdapter(foodItems);
+        adapter = new FoodItemAdapter(foodItems, getApplicationContext());
         foodRecyclerView.setAdapter(adapter);
 
         // Fetch food items from the API

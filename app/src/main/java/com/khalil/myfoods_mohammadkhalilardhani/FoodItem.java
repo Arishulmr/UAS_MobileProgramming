@@ -11,7 +11,7 @@ public class FoodItem {
     private String food_image;
     private int food_quantity;
     private int food_price;
-    private boolean food_rate;
+    private int food_rate;
 
     public FoodItem(String food_name, String food_category, String food_type,
                     int food_weight, int food_price, int food_quantity, String food_desc,
@@ -103,11 +103,11 @@ public class FoodItem {
         this.food_price = food_price;
     }
 
-    public boolean isFood_rate() {
+    public int isFood_rate() {
         return food_rate;
     }
 
-    public void setFood_rate(boolean food_rate) {
+    public void setFood_rate(int food_rate) {
         this.food_rate = food_rate;
     }
 }
