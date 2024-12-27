@@ -11,20 +11,21 @@ public class FoodItem {
     private String food_image;
     private int food_quantity;
     private int food_price;
-
     private boolean food_rate;
 
     public FoodItem(String food_name, String food_category, String food_type,
-                    int food_weight, int food_price, int food_quantity, String food_desc, String food_image) {
+                    int food_weight, int food_price, int food_quantity, String food_desc,
+                    String food_image) {
         this.food_name = food_name;
-        this.food_category = food_category;
+        this.food_image = food_image;
         this.food_type = food_type;
+        this.food_desc = food_desc;
+        this.food_category = food_category;
         this.food_weight = food_weight;
         this.food_quantity = food_quantity;
         this.food_price = food_price;
-        this.food_desc = food_desc;
-        this.food_image = food_image;
     }
+
 
 
 

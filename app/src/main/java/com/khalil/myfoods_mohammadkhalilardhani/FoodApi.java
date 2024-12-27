@@ -1,7 +1,6 @@
 package com.khalil.myfoods_mohammadkhalilardhani;
 
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -11,21 +10,14 @@ import retrofit2.http.Part;
 
 import java.util.List;
 
+// API interface for Retrofit
 public interface FoodApi {
-    // Fetch all food items
-    @GET("fetch_food_items.php")
+    @GET("fetch_food_items.php")  // Ensure this URL path is correct
     Call<List<FoodItem>> getFoodItems();
+    @POST("add_food_item.php")  // Your server's endpoint for adding food items
+    Call<Void> addFoodItem(@Body FoodItem foodItem);
 
-    // Method for adding food item with image
     @Multipart
-    @POST("add_food_item_with_image.php")
-    Call<Void> addFoodItemWithImage(
-            @Part("foodData") RequestBody foodData,  // JSON food data
-            @Part MultipartBody.Part image           // Image part
-    );
-
-
-    // Method for adding food item without image (just the food data)
-    @POST("add_food_item.php")
-    Call<Void> addFoodItem(@Body FoodItem foodItem); // Send the food item as JSON body
+    @POST("upload_image.php")
+    Call<ImageResponse> uploadImage(@Part MultipartBody.Part file);
 }
