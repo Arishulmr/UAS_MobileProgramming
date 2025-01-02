@@ -46,5 +46,6 @@ dependencies {
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
     implementation (libs.recyclerview.v121)
-
+implementation (libs.glide)
+    annotationProcessor (libs.compiler)
 }

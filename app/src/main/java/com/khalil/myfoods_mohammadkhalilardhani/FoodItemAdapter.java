@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodViewHolder> {
@@ -29,18 +31,21 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
 
     @Override
     public void onBindViewHolder(FoodViewHolder holder, int position) {
-        // Get the food item at the given position
         FoodItem foodItem = foodList.get(position);
 
-        // Bind data to the views in the food item layout
         holder.foodName.setText(foodItem.getFood_name());
         holder.foodPrice.setText(String.valueOf(foodItem.getFood_price()));
         holder.foodCategory.setText(String.valueOf(foodItem.getFood_category()));
         holder.foodWeight.setText(String.valueOf(foodItem.getFood_weight()));
         holder.foodQuantity.setText(String.valueOf(foodItem.getFood_quantity()));
-        // You can add code to display the image, ratings, etc.
-        // holder.foodImage.setImageResource(foodItem.getFoodImageResourceId());
+
+        // Use Glide to load the image
+        Glide.with(holder.itemView.getContext())
+                .load(foodItem.getFood_image()) // Load the image URL
+                .placeholder(R.drawable.burger) // Optional placeholder image
+                .into(holder.foodImage); // Target ImageView
     }
+
 
     @Override
     public int getItemCount() {

@@ -254,40 +254,6 @@
         }
 
 
-        //    private void uploadImage(File imageFile) {
-    //        // Create Retrofit instance
-    //        Retrofit retrofit = new Retrofit.Builder()
-    //                .baseUrl(BASE_URL) // Your API base URL
-    //                .addConverterFactory(GsonConverterFactory.create())
-    //                .build();
-    //
-    //        FoodApi foodApi = retrofit.create(FoodApi.class);
-    //
-    //        // Create RequestBody for file
-    //        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
-    //        MultipartBody.Part body = MultipartBody.Part.createFormData("file", imageFile.getName(), requestFile);
-    //
-    //        Call<ImageResponse> call = foodApi.uploadImage(body);
-    //        call.enqueue(new Callback<ImageResponse>() {
-    //            @Override
-    //            public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
-    //                if (response.isSuccessful() && response.body() != null) {
-    //                    String imageUrl = response.body().getImageUrl(); // Get the uploaded image URL
-    //                    Log.d("UploadImage", "Image uploaded successfully: " + imageUrl);
-    //
-    //                    // Pass the imageUrl when adding the food item
-    //                    addFoodItemWithImageUrl(imageUrl);
-    //                } else {
-    //                    Toast.makeText(AddFoodActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show();
-    //                }
-    //            }
-    //
-    //            @Override
-    //            public void onFailure(Call<ImageResponse> call, Throwable t) {
-    //                Toast.makeText(AddFoodActivity.this, "Upload error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-    //            }
-    //        });
-    //    }
 
         private void addFoodItemWithImageUrl() {
             String foodName = foodNameEditText.getText().toString().trim();
@@ -309,6 +275,8 @@
 
                 // Make the Retrofit POST request
                 addFoodItem(foodItem);
+                Log.d("AddFoodActivity",
+                        "imageFileName: " + imageFileName);
             }
         }
 
@@ -366,5 +334,6 @@
             foodDescEditText.setText("");
             categorySpinner.setSelection(0);
             typeSpinner.setSelection(0);
+            foodImagePreview.setImageDrawable(null);
         }
     }
