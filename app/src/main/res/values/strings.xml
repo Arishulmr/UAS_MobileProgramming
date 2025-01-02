@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">myFoods_MohammadKhalilArdhani</string>
+    <string-array name="category_array">
+        <item>Vegetarian</item>
+        <item>Non-Vegetarian</item>
+        <item>Vegan</item>
+    </string-array>
+
+    <string-array name="type_array">
+        <item>Starter</item>
+        <item>Main Course</item>
+        <item>Dessert</item>
+    </string-array>
+</resources>
