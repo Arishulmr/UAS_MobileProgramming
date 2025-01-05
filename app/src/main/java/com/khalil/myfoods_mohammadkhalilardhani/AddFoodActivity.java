@@ -41,7 +41,7 @@
 
     public class AddFoodActivity extends AppCompatActivity {
         private static final String IMAGE_UPLOAD_URL =
-                "http://192.168.1.10:8080/myfoods_backend/uploads/"; // Server
+                "http://192.168.1.9:8080/myfoods_backend/uploads/"; // Server
         // upload endpoint
         private ImageView foodImagePreview;
         private Uri selectedImageUri;
@@ -53,7 +53,8 @@
 
         private String selectedCategory, selectedType, imageFileName;
 
-        private static final String BASE_URL = "http://192.168.1.10:8080/myfoods_backend/"; // Your API base URL
+        private static final String BASE_URL = "http://192.168.1.9:8080/myfoods_backend/"; //
+        // Your API base URL
         private FoodApi foodApi;
 
         @SuppressLint("WrongViewCast")

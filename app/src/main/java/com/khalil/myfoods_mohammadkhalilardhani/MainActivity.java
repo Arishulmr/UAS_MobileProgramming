@@ -4,12 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.navigation.NavigationView;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ImageButton addFoodButton;
+    private ImageButton addFoodButton, menuButton;
 
     private RecyclerView foodRecyclerView;
     private FoodItemAdapter adapter;
@@ -27,17 +34,50 @@ public class MainActivity extends AppCompatActivity {
 
     private Retrofit retrofit;
     private FoodApi foodApi;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        addFoodButton = (ImageButton) findViewById(R.id.addItemButton);
+
+        menuButton = findViewById(R.id.menuButton);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        addFoodButton = findViewById(R.id.addItemButton);
         addFoodButton.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, AddFoodActivity.class);
             startActivity(intent);
             finish();
+        });
+
+        menuButton.setOnClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
+        NavigationView navigationView = findViewById(R.id.navigationView);
+        navigationView.setNavigationItemSelectedListener(item -> {
+            // Handle navigation view item clicks here.
+            int id = item.getItemId();
+
+            if (id == R.id.nav_profile) {
+                Toast.makeText(this, "profile clicked", Toast.LENGTH_SHORT).show();
+            } else if (id == R.id.nav_filter) {
+                Toast.makeText(this, "filter clicked", Toast.LENGTH_SHORT).show();
+            } else if (id == R.id.nav_sort_by) {
+                Toast.makeText(this, "sort clicked", Toast.LENGTH_SHORT).show();
+
+                // Handle the sort by action
+            } else if (id == R.id.nav_logout) {
+                Toast.makeText(this, "logout clicked", Toast.LENGTH_SHORT).show();
+            }
+
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
         });
 
         foodRecyclerView = findViewById(R.id.foodRecyclerView);
@@ -45,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up Retrofit
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.10:8080/myfoods_backend/") // Your API URL
+                .baseUrl("http://192.168.1.9:8080/myfoods_backend/") // Your API URL
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

@@ -27,6 +27,9 @@ public interface FoodApi {
     @PUT("update_food_rate.php")
     Call<Void> updateFoodRate(@Body FoodItem foodItem);
 
+    @POST("registerWithImage.php")
+    Call<Void> registerWithImage(@Body User user);
+
     @DELETE("delete_food.php")
     Call<Void> deleteFood(@Path("food_id") int food_id);
 }

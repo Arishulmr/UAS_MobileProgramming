@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                String url = "http://192.168.1.10:8080/myfoods_backend/login.php"; // Replace
+                String url = "http://192.168.1.9:8080/myfoods_backend/login.php"; // Replace
                 // with
                 // your server URL
 

@@ -94,15 +94,17 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
 
         // Handle the deleteButton (Delete the food item)
         holder.deleteButton.setOnClickListener(v -> {
-            deleteFoodItem(foodItem);
-            // Optionally remove the item from the list and notify the adapter
-            foodList.remove(position);
-            notifyItemRemoved(position);
+            int currentPosition = holder.getAbsoluteAdapterPosition();
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                deleteFoodItem(foodItem);
+                foodList.remove(currentPosition);
+                notifyItemRemoved(currentPosition);
+            }
         });
     }
 
     private void updateFoodRate(FoodItem foodItem) {
-        String url = "http://192.168.1.10:8080/myfoods_backend/update_food_rate.php";
+        String url = "http://192.168.1.9:8080/myfoods_backend/update_food_rate.php";
 
         // Create a request body with the food_id and food_rate
         JSONObject jsonParams = new JSONObject();
@@ -142,22 +144,27 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
 
 
     private void deleteFoodItem(FoodItem foodItem) {
-        String url = "http://192.168.1.10:8080/myfoods_backend/delete_food.php";
+        String url = "http://192.168.1.9:8080/myfoods_backend/delete_food.php";
 
         // Create a request body with the food_id
-        Map<String, String> params = new HashMap<>();
-        params.put("food_id", String.valueOf(foodItem.getFood_id()));  // Use getFood_id()
+        JSONObject jsonParams = new JSONObject();
+        try {
+            jsonParams.put("food_id", foodItem.getFood_id());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-
-
-        // Create a request to send the data using POST
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+        // Make the POST request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonParams,
                 response -> {
                     try {
-                        JSONObject jsonResponse = new JSONObject(response);
-                        String status = jsonResponse.getString("status");
+                        // Log the entire response
+                        Log.d("FoodItemAdapter", "Response: " + response.toString());
+                        String status = response.getString("status");
                         if (status.equals("success")) {
-                            Log.d("FoodItemAdapter", "Food item deleted successfully.");
+                            Log.d("FoodItemAdapter", "Food deleted successfully.");
+                        } else {
+                            Log.d("FoodItemAdapter", "Failed to delete food.");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -165,16 +172,11 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
                 },
                 error -> {
                     error.printStackTrace();
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                return params;
-            }
-        };
+                });
 
         // Add the request to the queue
         RequestQueue queue = Volley.newRequestQueue(context);
-        queue.add(stringRequest);
+        queue.add(jsonObjectRequest);
     }
 
     @Override
