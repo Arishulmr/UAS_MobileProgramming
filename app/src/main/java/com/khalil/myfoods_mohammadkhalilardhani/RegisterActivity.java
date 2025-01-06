@@ -45,8 +45,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String IMAGE_UPLOAD_URL =
-            "http://192.168.1.9:8080/myfoods_backend/uploads/";
-    private static final String BASE_URL = "http://192.168.1.9:8080/myfoods_backend/";
+            "http://192.168.1.11:8080/myfoods_backend/uploads/";
+    private static final String BASE_URL = "http://192.168.1.11:8080/myfoods_backend/";
 
     private EditText usernameEditText, emailEditText, passwordEditText;
     private Uri selectedImageUri;
@@ -107,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                String url = "http://192.168.1.9:8080/myfoods_backend/register.php"; //
+                String url = "http://192.168.1.11:8080/myfoods_backend/register.php"; //
                 // Replace with your server URL
                 if (selectedImageUri != null) {
                     addUserWithImageUrl();

@@ -17,7 +17,15 @@ import java.util.List;
 public interface FoodApi {
     @GET("fetch_food_items.php")  // Ensure this URL path is correct
     Call<List<FoodItem>> getFoodItems();
-    @POST("add_food_item.php")  // Your server's endpoint for adding food items
+    @GET("fetch_beverage_items.php")  // Ensure this URL path is correct
+    Call<List<FoodItem>> getBeverageItems();
+    @GET("fetch_food_food_items.php")  // Ensure this URL path is correct
+    Call<List<FoodItem>> getFoodFoodItems();
+    @GET("fetch_photo_items.php")
+    Call<List<FoodItem>> getImageItems();
+    @GET("fetch_favorited_items.php")
+    Call<List<FoodItem>> getFavoritedFoodItems();
+    @POST("add_food_item.php")
     Call<Void> addFoodItem(@Body FoodItem foodItem);
 
     @Multipart

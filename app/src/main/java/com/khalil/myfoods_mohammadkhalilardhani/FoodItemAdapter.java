@@ -35,25 +35,31 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodViewHolder> {
-
+    public interface OnItemClickListener {
+        void onItemClick(FoodItem item);
+    }
+    private OnItemClickListener listener;
     private List<FoodItem> foodList;
-    private Context context;  // Context for network requests
+    private Context context;
 
 
     public FoodItemAdapter(List<FoodItem> foodList, Context context) {
         this.foodList = foodList;
-        this.context = context;  // Ensure context is passed and used
+        this.context = context;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
 
-    // Other methods (onCreateViewHolder, getItemCount, etc.) remain unchanged
 
     @NonNull
     @Override
     public FoodViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Inflate the layout properly
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.food_item, parent, false);
         return new FoodViewHolder(view);
+
     }
 
 
@@ -66,33 +72,36 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
         holder.foodCategory.setText(String.valueOf(foodItem.getFood_category()));
         holder.foodWeight.setText(String.valueOf(foodItem.getFood_weight()));
         holder.foodQuantity.setText(String.valueOf(foodItem.getFood_quantity()));
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(foodItem));
 
-        // Load image using Glide
         Glide.with(holder.itemView.getContext())
                 .load(foodItem.getFood_image())
                 .placeholder(R.drawable.burger)
+                .circleCrop()
                 .into(holder.foodImage);
 
-        // Set the correct star color based on food_rate
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(foodItem);
+            }
+        });
+
+
         if (foodItem.isFood_rate() == 1) {
-            holder.likeButton.setTextColor(Color.YELLOW);  // Yellow for favorite
+            holder.likeButton.setTextColor(Color.YELLOW);
         } else {
-            holder.likeButton.setTextColor(Color.GRAY);  // Gray for not favorite
+            holder.likeButton.setTextColor(Color.GRAY);
         }
 
-        // Handle the likeButton (Toggle food_rate)
         holder.likeButton.setOnClickListener(v -> {
-            int newRate = foodItem.isFood_rate() == 0 ? 1 : 0; // Toggle between 0 and 1
+            int newRate = foodItem.isFood_rate() == 0 ? 1 : 0;
             foodItem.setFood_rate(newRate);
 
-            // Update food rate in the database
             updateFoodRate(foodItem);
 
-            // Update the star color immediately
             holder.likeButton.setTextColor(newRate == 1 ? Color.YELLOW : Color.GRAY);
         });
 
-        // Handle the deleteButton (Delete the food item)
         holder.deleteButton.setOnClickListener(v -> {
             int currentPosition = holder.getAbsoluteAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION) {
@@ -104,9 +113,8 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
     }
 
     private void updateFoodRate(FoodItem foodItem) {
-        String url = "http://192.168.1.9:8080/myfoods_backend/update_food_rate.php";
+        String url = "http://192.168.1.11:8080/myfoods_backend/update_food_rate.php";
 
-        // Create a request body with the food_id and food_rate
         JSONObject jsonParams = new JSONObject();
         try {
             jsonParams.put("food_id", foodItem.getFood_id());
@@ -115,11 +123,9 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
             e.printStackTrace();
         }
 
-        // Make the POST request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonParams,
                 response -> {
                     try {
-                        // Log the entire response
                         Log.d("FoodItemAdapter", "Response: " + response.toString());
                         String status = response.getString("status");
                         if (status.equals("success")) {
@@ -135,7 +141,6 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
                     error.printStackTrace();
                 });
 
-        // Add the request to the queue
         RequestQueue queue = Volley.newRequestQueue(context);
         queue.add(jsonObjectRequest);
     }
@@ -144,9 +149,8 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
 
 
     private void deleteFoodItem(FoodItem foodItem) {
-        String url = "http://192.168.1.9:8080/myfoods_backend/delete_food.php";
+        String url = "http://192.168.1.11:8080/myfoods_backend/delete_food.php";
 
-        // Create a request body with the food_id
         JSONObject jsonParams = new JSONObject();
         try {
             jsonParams.put("food_id", foodItem.getFood_id());
@@ -154,11 +158,9 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
             e.printStackTrace();
         }
 
-        // Make the POST request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonParams,
                 response -> {
                     try {
-                        // Log the entire response
                         Log.d("FoodItemAdapter", "Response: " + response.toString());
                         String status = response.getString("status");
                         if (status.equals("success")) {
@@ -174,7 +176,6 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
                     error.printStackTrace();
                 });
 
-        // Add the request to the queue
         RequestQueue queue = Volley.newRequestQueue(context);
         queue.add(jsonObjectRequest);
     }
