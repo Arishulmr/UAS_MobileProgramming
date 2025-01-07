@@ -96,7 +96,7 @@ public class FoodItem {
         this.food_quantity = food_quantity;
     }
 
-    public double getFood_price() {
+    public int getFood_price() {
         return food_price;
     }
 

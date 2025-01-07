@@ -41,9 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                String url = "http://192.168.1.11:8080/myfoods_backend/login.php"; // Replace
-                // with
-                // your server URL
+                String url = "http://192.168.1.11:8080/myfoods_backend/login.php";
 
                 RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -51,14 +49,24 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 JSONObject jsonResponse = new JSONObject(response);
                                 if (jsonResponse.getString("status").equals("success")) {
+                                    String userId = jsonResponse.getString("user_id");
+
+                                    // Save the user ID in shared preferences
+                                    getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
+                                            .edit()
+                                            .putString("user_id", userId)
+                                            .apply();
+
+                                    // Redirect to MainActivity
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {
-                                    Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, "Login Failed: " + jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                Toast.makeText(LoginActivity.this, "Error parsing response.", Toast.LENGTH_SHORT).show();
                             }
                         },
                         error -> Toast.makeText(LoginActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show()
@@ -75,6 +83,8 @@ public class LoginActivity extends AppCompatActivity {
                 queue.add(stringRequest);
             }
         });
+
+
 
 
         registerButton.setOnClickListener(new View.OnClickListener() {

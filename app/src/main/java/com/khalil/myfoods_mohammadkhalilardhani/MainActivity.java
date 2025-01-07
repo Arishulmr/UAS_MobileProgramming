@@ -73,13 +73,16 @@ private Button clearFilterButton;
             int id = item.getItemId();
 
             if (id == R.id.nav_profile) {
-                Toast.makeText(this, "profile clicked", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                finish();
+//                Toast.makeText(this, "profile clicked", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_filter) {
                 showFilterDialog();
-                Toast.makeText(this, "filter clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "filter clicked", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_sort_by) {
                 showSortDialog();
-                Toast.makeText(this, "sort clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "sort clicked", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_logout) {
                 Intent intent = new Intent(MainActivity.this, StartActivity.class);
                 startActivity(intent);
@@ -159,11 +162,14 @@ private Button clearFilterButton;
 //            intent.putExtra("food_type_position", getTypePosition(item.getFood_type()));
 
             if(item.getFood_category().equals("Food")){
+//                Toast.makeText(this, item.getFood_type(), Toast.LENGTH_SHORT).show();
                 intent.putExtra("food_type_position", getFoodTypePosition(item.getFood_type()));
             }else{
+//                Toast.makeText(this, item.getFood_type(), Toast.LENGTH_SHORT).show();
                 intent.putExtra("food_type_position", getBeverageTypePosition(item.getFood_type()));
             }
             startActivity(intent);
+            finish();
         });
 
 
@@ -187,6 +193,7 @@ private Button clearFilterButton;
         String[] types = {"Fruits and Vegetables", "Carbohydrates", "Proteins", "Fats and Oils"};
         for (int i = 0; i < types.length; i++) {
             if (types[i].equals(type)) {
+                Log.d("MainActivity", "getFoodTypePosition: " + i);
                 return i;
             }
         }
@@ -198,6 +205,8 @@ private Button clearFilterButton;
         String[] types = {"Carbonated", "Coffee", "Tea", "Sports", "Water", "Juice"};
         for (int i = 0; i < types.length; i++) {
             if (types[i].equals(type)) {
+                Log.d("MainActivity", "getBeverageTypePosition: " + i);
+
                 return i;
             }
         }
