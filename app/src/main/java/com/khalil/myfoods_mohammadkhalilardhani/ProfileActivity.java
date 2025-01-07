@@ -1,6 +1,8 @@
 package com.khalil.myfoods_mohammadkhalilardhani;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,11 +47,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     private EditText usernameEditText, emailEditText;
     private ImageView profileImageView;
+    private Context context;
     private Button uploadPictureButton, updateButton, backButton;
 
     private Uri selectedImageUri;
-    private String uploadedImageUrl;
-    private String loggedInUserId = "1"; // Example user ID, replace with actual logged-in user ID
+    private String uploadedImageUrl, imageFileName;
+
 
     private UserApi userApi;
 
@@ -58,14 +61,15 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        context = this;
         usernameEditText = findViewById(R.id.usernameEditText);
         emailEditText = findViewById(R.id.emailEditText);
         profileImageView = findViewById(R.id.profileImageView);
         uploadPictureButton = findViewById(R.id.uploadPictureButton);
         updateButton = findViewById(R.id.updateButton);
         backButton = findViewById(R.id.backButton);
-        String userId = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).getString("user_id", null);
-        if (userId == null) {
+        int userId = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).getInt("user_id", -1);
+        if (userId == -1) {
             Toast.makeText(this, "User not logged in!", Toast.LENGTH_SHORT).show();
             finish(); // Close activity if no user ID is found
             return;
@@ -106,14 +110,14 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchUserData(String userId) {
+    private void fetchUserData(int userId) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, USER_API_URL + "?user_id=" + userId,
                 null,
                 response -> {
                     try {
                         String username = response.getString("username");
                         String email = response.getString("email");
-                        String profileImage = IMAGE_UPLOAD_URL + response.getString("profile_image");
+                        String profileImage = response.getString("profile_image");
 
                         usernameEditText.setText(username);
                         emailEditText.setText(email);
@@ -136,15 +140,39 @@ public class ProfileActivity extends AppCompatActivity {
         queue.add(jsonObjectRequest);
     }
 
+    private File getFileFromUri(Uri uri) {
+        String filePath = null;
+        String[] projection = {MediaStore.Images.Media.DATA};
+        try (Cursor cursor = getContentResolver().query(uri, projection, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                filePath = cursor.getString(columnIndex);
+            }
+        }
+
+        if (filePath != null) {
+            return new File(filePath);
+        } else {
+            // If the file path couldn't be resolved, return null or handle gracefully
+            Toast.makeText(this, "Invalid file path", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
     private void uploadImageToServer(Uri imageUri) {
         try {
+            File imageFile = getFileFromUri(imageUri);
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
             byte[] byteArray = stream.toByteArray();
 
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), byteArray);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("file", "profile.jpg", requestFile);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("file", imageFile.getName(),
+                    requestFile);
+
+            imageFileName = IMAGE_UPLOAD_URL + imageFile.getName();
+
 
             Call<ImageResponse> call = userApi.uploadProfileImage(body);
             call.enqueue(new Callback<ImageResponse>() {
@@ -154,7 +182,10 @@ public class ProfileActivity extends AppCompatActivity {
                         uploadedImageUrl = response.body().getImageUrl();
                         Glide.with(ProfileActivity.this)
                                 .load(uploadedImageUrl)
+                                .placeholder(R.drawable.profileplaceholder)
                                 .into(profileImageView);
+
+                        profileImageView.setImageURI(selectedImageUri);
 
                         Toast.makeText(ProfileActivity.this, "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
                     } else {
@@ -174,20 +205,23 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void updateUserProfile(String userId) {
+    private void updateUserProfile(int userId) {
         String updatedUsername = usernameEditText.getText().toString();
         String updatedEmail = emailEditText.getText().toString();
+        String url = "http://192.168.1.11:8080/myfoods_backend/update_user_data.php";
 
         JSONObject jsonParams = new JSONObject();
         try {
             jsonParams.put("user_id", userId);
-            jsonParams.put("username", updatedUsername);
-            jsonParams.put("email", updatedEmail);
-            jsonParams.put("profile_image", uploadedImageUrl);
+            jsonParams.put("user_name", updatedUsername);
+            jsonParams.put("user_email", updatedEmail);
+            jsonParams.put("user_image", imageFileName);
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, BASE_URL + "update_user_data.php", jsonParams,
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,
+                    jsonParams,
                     response -> {
                         try {
+                            Log.d("ProfileActivity", "Response: " + response.toString());
                             String status = response.getString("status");
                             if (status.equals("success")) {
                                 Toast.makeText(ProfileActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
@@ -203,8 +237,10 @@ public class ProfileActivity extends AppCompatActivity {
                         Toast.makeText(ProfileActivity.this, "Error updating profile.", Toast.LENGTH_SHORT).show();
                     });
 
-            RequestQueue queue = Volley.newRequestQueue(this);
+            RequestQueue queue = Volley.newRequestQueue(context);
             queue.add(jsonObjectRequest);
+            Toast.makeText(this, "Profile updated successfully.", Toast.LENGTH_SHORT).show();
+
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error creating update request.", Toast.LENGTH_SHORT).show();

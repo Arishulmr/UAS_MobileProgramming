@@ -49,12 +49,12 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 JSONObject jsonResponse = new JSONObject(response);
                                 if (jsonResponse.getString("status").equals("success")) {
-                                    String userId = jsonResponse.getString("user_id");
+                                    int userId = jsonResponse.getInt("user_id");
 
                                     // Save the user ID in shared preferences
                                     getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
                                             .edit()
-                                            .putString("user_id", userId)
+                                            .putInt("user_id", userId)
                                             .apply();
 
                                     // Redirect to MainActivity
