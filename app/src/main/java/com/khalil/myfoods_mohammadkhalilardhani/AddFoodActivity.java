@@ -41,8 +41,6 @@
     import retrofit2.converter.gson.GsonConverterFactory;
 
     public class AddFoodActivity extends AppCompatActivity {
-        private static final String IMAGE_UPLOAD_URL =
-                "http://192.168.1.12:8080/myFoods_backend/" + "uploads/";
         private ImageView foodImagePreview;
         private Uri selectedImageUri;
         private String uploadedImageUrl;
@@ -144,6 +142,7 @@
 
                 if (selectedImageUri != null) {
                     addFoodItemWithImageUrl();
+
                 }
 
                 else if (isValidInput(foodName, weightStr, priceStr, quantityStr)) {
@@ -268,14 +267,13 @@
                 int price = Integer.parseInt(priceStr);
                 int quantity = Integer.parseInt(quantityStr);
 
-                String imageUrl = IMAGE_UPLOAD_URL + imageFileName;
+                String imageUrl = imageFileName;
 
                 FoodItem foodItem = new FoodItem(foodName, selectedCategory, selectedType, weight,
                         price, quantity, description, imageUrl);
 
                 addFoodItem(foodItem);
-                Log.d("AddFoodActivity",
-                        "imageFileName: " + imageFileName);
+                foodImagePreview.setVisibility(View.GONE);
             }
         }
 

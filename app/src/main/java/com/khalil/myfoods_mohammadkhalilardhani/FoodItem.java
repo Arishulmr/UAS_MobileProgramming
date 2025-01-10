@@ -79,7 +79,7 @@ public class FoodItem {
     }
 
     public String getFood_image() {
-        return food_image;
+        return  "http://192.168.1.12:8080/myFoods_backend/uploads/" + food_image;
     }
 
     public void setFood_image(String food_image) {

@@ -26,7 +26,7 @@ public class User {
     }
 
     public String getImage() {
-        return user_image;
+        return "http://192.168.1.12:8080/myFoods_backend/uploads/" + user_image;
     }
 
     public void setUsername(String user_name) {

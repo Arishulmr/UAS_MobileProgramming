@@ -113,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
                     try {
                         String username = response.getString("username");
                         String email = response.getString("email");
-                        String profileImage = response.getString("profile_image");
+                        String profileImage = "http://192.168.1.12:8080/myFoods_backend/uploads/" + response.getString("profile_image");
 
                         usernameEditText.setText(username);
                         emailEditText.setText(email);
@@ -166,7 +166,7 @@ public class ProfileActivity extends AppCompatActivity {
             MultipartBody.Part body = MultipartBody.Part.createFormData("file", imageFile.getName(),
                     requestFile);
 
-            imageFileName = IMAGE_UPLOAD_URL + imageFile.getName();
+            imageFileName = imageFile.getName();
 
 
             Call<ImageResponse> call = userApi.uploadProfileImage(body);
