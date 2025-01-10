@@ -51,7 +51,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EditFoodActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "@string/base_url";
+    private static final String BASE_URL = "http://192.168.1.12:8080/myFoods_backend/";
     private static final String IMAGE_UPLOAD_URL =
             BASE_URL + "uploads/";
     private Spinner categorySpinner, typeSpinner;
@@ -216,7 +216,7 @@ private Context context;
                                 String food_type,
                                 int food_weight, int food_price, int food_quantity, String food_desc,
                                 String food_image) {
-        String url = "@string/base_url" + "update_item.php";
+        String url = "http://192.168.1.12:8080/myFoods_backend/" + "update_item.php";
 
         JSONObject jsonParams = new JSONObject();
         try {

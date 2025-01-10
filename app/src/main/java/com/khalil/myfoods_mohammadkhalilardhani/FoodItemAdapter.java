@@ -113,7 +113,7 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
     }
 
     private void updateFoodRate(FoodItem foodItem) {
-        String url = "@string/base_url" + "update_food_rate.php";
+        String url = "http://192.168.1.12:8080/myFoods_backend/" + "update_food_rate.php";
 
         JSONObject jsonParams = new JSONObject();
         try {
@@ -149,7 +149,7 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.FoodVi
 
 
     private void deleteFoodItem(FoodItem foodItem) {
-        String url = "@string/base_url"+"delete_food.php";
+        String url = "http://192.168.1.12:8080/myFoods_backend/"+"delete_food.php";
 
         JSONObject jsonParams = new JSONObject();
         try {

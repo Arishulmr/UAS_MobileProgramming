@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Foodies</string>
-    <string name="base_url">http://192.168.1.11/myFoods_backend/</string>
     <string-array name="category_array">
         <item>Food</item>
         <item>Beverage</item>

@@ -41,7 +41,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "@string/base_url";
+    private static final String BASE_URL = "http://192.168.1.12:8080/myFoods_backend/";
     private static final String USER_API_URL = BASE_URL + "get_user_data.php";
     private static final String IMAGE_UPLOAD_URL = BASE_URL + "uploads/";
 
@@ -203,7 +203,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void updateUserProfile(int userId) {
         String updatedUsername = usernameEditText.getText().toString();
         String updatedEmail = emailEditText.getText().toString();
-        String url = "@string/base_url" + "update_user_data.php";
+        String url = "http://192.168.1.12:8080/myFoods_backend/" + "update_user_data.php";
 
         JSONObject jsonParams = new JSONObject();
         try {

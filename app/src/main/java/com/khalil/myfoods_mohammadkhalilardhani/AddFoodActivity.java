@@ -42,7 +42,7 @@
 
     public class AddFoodActivity extends AppCompatActivity {
         private static final String IMAGE_UPLOAD_URL =
-                "@string/base_url" + "uploads/";
+                "http://192.168.1.12:8080/myFoods_backend/" + "uploads/";
         private ImageView foodImagePreview;
         private Uri selectedImageUri;
         private String uploadedImageUrl;
@@ -53,7 +53,7 @@
 
         private String selectedCategory, selectedType, imageFileName;
 
-        private static final String BASE_URL = "@string/base_url";
+        private static final String BASE_URL = "http://192.168.1.12:8080/myFoods_backend/";
         private FoodApi foodApi;
 
         @SuppressLint("WrongViewCast")

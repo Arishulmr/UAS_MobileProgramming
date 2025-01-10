@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                String url = "@string/base_url"+"login.php";
+                String url = "http://192.168.1.12:8080/myFoods_backend/"+"login.php";
 
                 RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

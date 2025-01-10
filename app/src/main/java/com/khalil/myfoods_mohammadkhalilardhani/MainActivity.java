@@ -112,7 +112,7 @@ private Button clearFilterButton;
 
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("@string/base_url")
+                .baseUrl("http://192.168.1.12:8080/myFoods_backend/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
