@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                String url = "http://192.168.1.11:8080/myfoods_backend/login.php";
+                String url = "@string/base_url"+"login.php";
 
                 RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -51,13 +51,11 @@ public class LoginActivity extends AppCompatActivity {
                                 if (jsonResponse.getString("status").equals("success")) {
                                     int userId = jsonResponse.getInt("user_id");
 
-                                    // Save the user ID in shared preferences
                                     getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
                                             .edit()
                                             .putInt("user_id", userId)
                                             .apply();
 
-                                    // Redirect to MainActivity
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();

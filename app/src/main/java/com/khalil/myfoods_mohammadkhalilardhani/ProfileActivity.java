@@ -41,7 +41,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://192.168.1.11:8080/myfoods_backend/";
+    private static final String BASE_URL = "@string/base_url";
     private static final String USER_API_URL = BASE_URL + "get_user_data.php";
     private static final String IMAGE_UPLOAD_URL = BASE_URL + "uploads/";
 
@@ -71,7 +71,7 @@ public class ProfileActivity extends AppCompatActivity {
         int userId = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).getInt("user_id", -1);
         if (userId == -1) {
             Toast.makeText(this, "User not logged in!", Toast.LENGTH_SHORT).show();
-            finish(); // Close activity if no user ID is found
+            finish();
             return;
         }
         Retrofit retrofit = new Retrofit.Builder()
@@ -82,7 +82,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         fetchUserData(userId);
 
-        // Image picker launcher
         ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -93,16 +92,13 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
 
-        // Upload picture button
         uploadPictureButton.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             imagePickerLauncher.launch(intent);
         });
 
-        // Update button logic (e.g., save updated user data)
         updateButton.setOnClickListener(v -> updateUserProfile(userId));
 
-        // Back button logic
         backButton.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
             startActivity(intent);
@@ -153,7 +149,6 @@ public class ProfileActivity extends AppCompatActivity {
         if (filePath != null) {
             return new File(filePath);
         } else {
-            // If the file path couldn't be resolved, return null or handle gracefully
             Toast.makeText(this, "Invalid file path", Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -208,7 +203,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void updateUserProfile(int userId) {
         String updatedUsername = usernameEditText.getText().toString();
         String updatedEmail = emailEditText.getText().toString();
-        String url = "http://192.168.1.11:8080/myfoods_backend/update_user_data.php";
+        String url = "@string/base_url" + "update_user_data.php";
 
         JSONObject jsonParams = new JSONObject();
         try {

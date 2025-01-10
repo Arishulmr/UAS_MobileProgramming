@@ -32,7 +32,6 @@ public class StartActivity extends AppCompatActivity {
             startActivity(intent);
                 });
 
-        // Button listeners
         Button loginButton = findViewById(R.id.loginButton);
         Button registerButton = findViewById(R.id.registerButton);
 

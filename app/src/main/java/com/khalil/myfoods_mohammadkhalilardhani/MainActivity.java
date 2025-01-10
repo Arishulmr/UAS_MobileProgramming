@@ -31,7 +31,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements FoodItemAdapter.OnItemClickListener {
     private ImageButton addFoodButton, menuButton;
@@ -56,7 +58,6 @@ private Button clearFilterButton;
 
         searchButton.setOnClickListener(v -> {
             searchData(searchBar.getText().toString());
-//            Toast.makeText(this, searchBar.getText().toString(), Toast.LENGTH_SHORT).show();
                 });
 
 
@@ -91,13 +92,10 @@ private Button clearFilterButton;
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent);
                 finish();
-//                Toast.makeText(this, "profile clicked", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_filter) {
                 showFilterDialog();
-//                Toast.makeText(this, "filter clicked", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_sort_by) {
                 showSortDialog();
-//                Toast.makeText(this, "sort clicked", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_logout) {
                 Intent intent = new Intent(MainActivity.this, StartActivity.class);
                 startActivity(intent);
@@ -113,19 +111,16 @@ private Button clearFilterButton;
 
 
 
-        // Set up Retrofit
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.11:8080/myfoods_backend/") // Your API URL
+                .baseUrl("@string/base_url")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         foodApi = retrofit.create(FoodApi.class);
-        // Set up the adapter
         adapter = new FoodItemAdapter(foodItems, this);
         foodRecyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(this::showItemDetailsDialog);
 
-        // Fetch food items from the API
         fetchFoodItems();
     }
 
@@ -141,9 +136,9 @@ private Button clearFilterButton;
                 if (response.isSuccessful() && response.body() != null) {
                     List<FoodItem> foodItemsFromApi = response.body();
                     if (!foodItemsFromApi.isEmpty()) {
-                        foodItems.clear();  // Clear existing data
-                        foodItems.addAll(foodItemsFromApi);  // Add new data
-                        adapter.notifyDataSetChanged();  // Notify adapter of data change
+                        foodItems.clear();
+                        foodItems.addAll(foodItemsFromApi);
+                        adapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(MainActivity.this, "No results found", Toast.LENGTH_SHORT).show();
                     }
@@ -198,8 +193,6 @@ private Button clearFilterButton;
         builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
         builder.setNegativeButton("Edit", (dialog, which) -> {
             Intent intent = new Intent(MainActivity.this, EditFoodActivity.class);
-
-            // Pass the FoodItem details to EditFoodActivity
             intent.putExtra("food_id", item.getFood_id());
             intent.putExtra("food_name", item.getFood_name());
             intent.putExtra("food_category", item.getFood_category());
@@ -211,13 +204,10 @@ private Button clearFilterButton;
             intent.putExtra("food_image", item.getFood_image());
 
             intent.putExtra("food_category_position", getCategoryPosition(item.getFood_category()));
-//            intent.putExtra("food_type_position", getTypePosition(item.getFood_type()));
 
             if(item.getFood_category().equals("Food")){
-//                Toast.makeText(this, item.getFood_type(), Toast.LENGTH_SHORT).show();
                 intent.putExtra("food_type_position", getFoodTypePosition(item.getFood_type()));
             }else{
-//                Toast.makeText(this, item.getFood_type(), Toast.LENGTH_SHORT).show();
                 intent.putExtra("food_type_position", getBeverageTypePosition(item.getFood_type()));
             }
             startActivity(intent);
@@ -230,18 +220,16 @@ private Button clearFilterButton;
     }
 
     private int getCategoryPosition(String category) {
-        // Define your categories list (replace with your actual list)
         String[] categories = {"Food", "Beverage"};
         for (int i = 0; i < categories.length; i++) {
             if (categories[i].equals(category)) {
                 return i;
             }
         }
-        return 0; // Default to the first position if not found
+        return 0;
     }
 
     private int getFoodTypePosition(String type) {
-        // Define your types list (replace with your actual list)
         String[] types = {"Fruits and Vegetables", "Carbohydrates", "Proteins", "Fats and Oils"};
         for (int i = 0; i < types.length; i++) {
             if (types[i].equals(type)) {
@@ -249,11 +237,11 @@ private Button clearFilterButton;
                 return i;
             }
         }
-        return 0; // Default to the first position if not found
+        return 0;
     }
 
     private int getBeverageTypePosition(String type) {
-        // Define your types list (replace with your actual list)
+
         String[] types = {"Carbonated", "Coffee", "Tea", "Sports", "Water", "Juice"};
         for (int i = 0; i < types.length; i++) {
             if (types[i].equals(type)) {
@@ -262,303 +250,143 @@ private Button clearFilterButton;
                 return i;
             }
         }
-        return 0; // Default to the first position if not found
+        return 0;
     }
 
     private void showClearFilterButton(){
         clearFilterButton.setVisibility(View.VISIBLE);
     }
     private void showFilterDialog() {
-        // Options for the radio buttons
         String[] filterOptions = {"Favorited", "Have image", "Food", "Beverage"};
-        // Variable to track the selected item
         final int[] selectedOption = {-1};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Filter")
-                .setSingleChoiceItems(filterOptions, selectedOption[0], (dialog, which) -> {
-                    // Update the selected option
-                    selectedOption[0] = which;
-                })
+                .setSingleChoiceItems(filterOptions, selectedOption[0], (dialog, which) -> selectedOption[0] = which)
                 .setPositiveButton("Apply", (dialog, id) -> {
-                    // Handle the filter application based on selectedOption[0]
-                    if (selectedOption[0] == 0) {
-                        // Apply "Favorited" filter
-                        applyFavoritedFilter();
-                    } else if (selectedOption[0] == 1) {
-                        // Apply "Have image" filter
-                        applyHaveImageFilter();
-                    } else if (selectedOption[0] == 2) {
-                        applyCategoryFoodFilter();
-                    }  else if (selectedOption[0] == 3) {
-                        applyCategoryBeverageFilter();
+                    if (selectedOption[0] == -1) {
+                        Toast.makeText(this, "No filter selected!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        switch (selectedOption[0]) {
+                            case 0:
+                                applyFilter("favorited");
+                                break;
+                            case 1:
+                                applyFilter("have_image");
+                                break;
+                            case 2:
+                                applyFilter("Food");
+                                break;
+                            case 3:
+                                applyFilter("Beverage");
+                                break;
+                        }
                     }
                 })
-                .setNegativeButton("Cancel", (dialog, id) -> {
-                    // User cancelled the dialog
-                    dialog.dismiss();
-                });
+                .setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
 
-        // Create and show the dialog
         AlertDialog dialog = builder.create();
         dialog.show();
     }
 
-    private void applyCategoryBeverageFilter(){
-        foodApi.getBeverageItems().enqueue(new Callback<List<FoodItem>>() {
+    private void applyFilter(String keyWord) {
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("keyWord", keyWord);
+
+        foodApi.getFilteredItems(requestBody).enqueue(new Callback<List<FoodItem>>() {
             @Override
             public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();  // Notify adapter of data change
+                    foodItems.clear();
+                    foodItems.addAll(foodItemsFromApi);
+                    adapter.notifyDataSetChanged();
                     showClearFilterButton();
-
                 } else {
-                    Log.e("MainActivity", "Response was unsuccessful or empty.");
+                    Log.e("API Error", "Response unsuccessful or empty.");
                 }
             }
 
             @Override
             public void onFailure(Call<List<FoodItem>> call, Throwable t) {
-                Log.e("MainActivity", "Failed to fetch food items: " + t.getMessage());
+                Log.e("API Error", "Request failed: " + t.getMessage());
             }
         });
+
     }
 
-    private void applyCategoryFoodFilter() {
-        foodApi.getFoodFoodItems().enqueue(new Callback<List<FoodItem>>() {
+    private void applySort(String keyWord) {
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("keyWord", keyWord);
+
+        foodApi.getSortedItems(requestBody).enqueue(new Callback<List<FoodItem>>() {
             @Override
             public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();  // Notify adapter of data change
+                    foodItems.clear();
+                    foodItems.addAll(foodItemsFromApi);
+                    adapter.notifyDataSetChanged();
                     showClearFilterButton();
-
                 } else {
-                    Log.e("MainActivity", "Response was unsuccessful or empty.");
+                    Log.e("API Error", "Response unsuccessful or empty.");
                 }
             }
 
             @Override
             public void onFailure(Call<List<FoodItem>> call, Throwable t) {
-                Log.e("MainActivity", "Failed to fetch food items: " + t.getMessage());
+                Log.e("API Error", "Request failed: " + t.getMessage());
             }
         });
+
     }
+
+
 
     private void showSortDialog() {
-        // Options for the radio buttons
         String[] filterOptions = {"Name", "Price",
                 "Category", "Weight", "Quantity"};
-        // Variable to track the selected item
         final int[] selectedOption = {-1};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Filter")
                 .setSingleChoiceItems(filterOptions, selectedOption[0], (dialog, which) -> {
-                    // Update the selected option
                     selectedOption[0] = which;
                 })
                 .setPositiveButton("Apply", (dialog, id) -> {
-                    // Handle the filter application based on selectedOption[0]
                     if (selectedOption[0] == 0) {
-                        applyNameSort();
+                        applySort("food_name");
                     } else if (selectedOption[0] == 1) {
-                        applyPriceSort();
+                        applySort("food_price");
 
                     } else if (selectedOption[0] == 2) {
-                        applyCategorySort();
+                        applySort("food_category");
 
                     }else if (selectedOption[0] == 3) {
-                        applyWeightSort();
+                        applySort("food_weight");
                     } else if (selectedOption[0] == 4) {
-                        applyQuantitySort();
+                        applySort("food_quantity");
 
                     }
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> {
-                    // User cancelled the dialog
                     dialog.dismiss();
                 });
 
-        // Create and show the dialog
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    private void applyNameSort(){
-        foodApi.sortByName().enqueue(new Callback<List<FoodItem>>() {
-            @Override
-            public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();
-                    showClearFilterButton();
-                    // Notify adapter of data change
-                } else {
-                    Log.e("MainActivity", "Response was unsuccessful or empty.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FoodItem>> call, Throwable t) {
-                Log.e("MainActivity", "Failed to fetch food items: " + t.getMessage());
-            }
-        });
-    }
-    private void applyPriceSort(){
-        foodApi.sortByPrice().enqueue(new Callback<List<FoodItem>>() {
-            @Override
-            public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();
-                    showClearFilterButton();
-                    // Notify adapter of data change
-                } else {
-                    Log.e("MainActivity", "Response was unsuccessful or empty.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FoodItem>> call, Throwable t) {
-                Log.e("MainActivity", "Failed to fetch food items: " + t.getMessage());
-            }
-        });
-    }
-    private void applyCategorySort(){
-        foodApi.sortByCategory().enqueue(new Callback<List<FoodItem>>() {
-            @Override
-            public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();
-                    showClearFilterButton();
-                    // Notify adapter of data change
-                } else {
-                    Log.e("MainActivity", "Response was unsuccessful or empty.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FoodItem>> call, Throwable t) {
-                Log.e("MainActivity", "Failed to fetch food items: " + t.getMessage());
-            }
-        });
-    }
-    private void applyWeightSort(){
-        foodApi.sortByWeight().enqueue(new Callback<List<FoodItem>>() {
-            @Override
-            public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();
-                    showClearFilterButton();
-                    // Notify adapter of data change
-                } else {
-                    Log.e("MainActivity", "Response was unsuccessful or empty.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FoodItem>> call, Throwable t) {
-                Log.e("MainActivity", "Failed to fetch food items: " + t.getMessage());
-            }
-        });
-    }
-    private void applyQuantitySort(){
-        foodApi.sortByQuantity().enqueue(new Callback<List<FoodItem>>() {
-            @Override
-            public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();
-                    showClearFilterButton();
-                    // Notify adapter of data change
-                } else {
-                    Log.e("MainActivity", "Response was unsuccessful or empty.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FoodItem>> call, Throwable t) {
-                Log.e("MainActivity", "Failed to fetch food items: " + t.getMessage());
-            }
-        });
-    }
-
-    private void applyFavoritedFilter() {
-        // Implement the logic to filter the list by favorited items
-        foodApi.getFavoritedFoodItems().enqueue(new Callback<List<FoodItem>>() {
-            @Override
-            public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();
-                    showClearFilterButton();
-                // Notify adapter of data change
-                } else {
-                    Log.e("MainActivity", "Response was unsuccessful or empty.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FoodItem>> call, Throwable t) {
-                Log.e("MainActivity", "Failed to fetch food items: " + t.getMessage());
-            }
-        });
-    }
-
-    private void applyHaveImageFilter() {
-        foodApi.getImageItems().enqueue(new Callback<List<FoodItem>>() {
-            @Override
-            public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();  // Notify adapter of data change
-                    showClearFilterButton();
-
-                } else {
-                    Log.e("MainActivity", "Response was unsuccessful or empty.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FoodItem>> call, Throwable t) {
-                Log.e("MainActivity", "Failed to fetch food items: " + t.getMessage());
-            }
-        });
     }
 
 
     private void fetchFoodItems() {
-        // Use Retrofit to make the API call
         foodApi.getFoodItems().enqueue(new Callback<List<FoodItem>>() {
             @Override
             public void onResponse(Call<List<FoodItem>> call, Response<List<FoodItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<FoodItem> foodItemsFromApi = response.body();
-                    foodItems.clear();  // Clear existing data
-                    foodItems.addAll(foodItemsFromApi);  // Add new data
-                    adapter.notifyDataSetChanged();  // Notify adapter of data change
+                    foodItems.clear();
+                    foodItems.addAll(foodItemsFromApi);
+                    adapter.notifyDataSetChanged();
                 } else {
                     Log.e("MainActivity", "Response was unsuccessful or empty.");
                 }

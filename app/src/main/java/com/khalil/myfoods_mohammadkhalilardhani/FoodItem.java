@@ -1,4 +1,4 @@
-package com.khalil.myfoods_mohammadkhalilardhani;  // Use your actual package name
+package com.khalil.myfoods_mohammadkhalilardhani;
 
 public class FoodItem {
 
@@ -28,8 +28,6 @@ public class FoodItem {
 
 
 
-
-    // Getters and Setters
 
     public int getFood_id() {
         return food_id;

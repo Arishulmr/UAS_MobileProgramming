@@ -44,9 +44,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    private static final String BASE_URL = "@string/base_url";
     private static final String IMAGE_UPLOAD_URL =
-            "http://192.168.1.11:8080/myfoods_backend/uploads/";
-    private static final String BASE_URL = "http://192.168.1.11:8080/myfoods_backend/";
+            BASE_URL + "uploads/";
 
     private EditText usernameEditText, emailEditText, passwordEditText;
     private Uri selectedImageUri;
@@ -107,8 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                String url = "http://192.168.1.11:8080/myfoods_backend/register.php"; //
-                // Replace with your server URL
+                String url = "@string/base_url"+"register.php";
                 if (selectedImageUri != null) {
                     addUserWithImageUrl();
                     startActivity(new Intent(RegisterActivity.this,
@@ -168,7 +167,6 @@ public class RegisterActivity extends AppCompatActivity {
         if (filePath != null) {
             return new File(filePath);
         } else {
-            // If the file path couldn't be resolved, return null or handle gracefully
             Toast.makeText(this, "Invalid file path", Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -200,12 +198,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (isValidInput(username, email, password)) {
 
-            // Use the server-provided URL of the uploaded image
             String imageUrl = IMAGE_UPLOAD_URL + imageFileName;
 
             User user = new User(username, email, password, imageUrl);
 
-            // Make the Retrofit POST request
             addUser(user);
             Log.d("RegisterActivity",
                     "imageFileName: " + imageFileName);
@@ -245,29 +241,24 @@ public class RegisterActivity extends AppCompatActivity {
     private void uploadImageToServer(Uri imageUri) {
         try {
             File imageFile = getFileFromUri(imageUri);
-            // Convert the URI to a bitmap
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
 
-            // Compress the bitmap to a byte array
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
             byte[] byteArray = stream.toByteArray();
 
-            // Create the request body
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), byteArray);
 
-            // Prepare the multipart request
             MultipartBody.Part body = MultipartBody.Part.createFormData("file", imageFile.getName(), requestFile);
 
             imageFileName = imageFile.getName();
 
-            // Set up Retrofit and make the call
             Call<ImageResponse> call = foodApi.uploadImage(body);
             call.enqueue(new Callback<ImageResponse>() {
                 @Override
                 public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        uploadedImageUrl = response.body().getImageUrl(); // URL from the server
+                        uploadedImageUrl = response.body().getImageUrl();
                         Toast.makeText(RegisterActivity.this, "Image uploaded!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(RegisterActivity.this, "Failed to upload image",

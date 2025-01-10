@@ -42,8 +42,7 @@
 
     public class AddFoodActivity extends AppCompatActivity {
         private static final String IMAGE_UPLOAD_URL =
-                "http://192.168.1.11:8080/myfoods_backend/uploads/"; // Server
-        // upload endpoint
+                "@string/base_url" + "uploads/";
         private ImageView foodImagePreview;
         private Uri selectedImageUri;
         private String uploadedImageUrl;
@@ -54,8 +53,7 @@
 
         private String selectedCategory, selectedType, imageFileName;
 
-        private static final String BASE_URL = "http://192.168.1.11:8080/myfoods_backend/"; //
-        // Your API base URL
+        private static final String BASE_URL = "@string/base_url";
         private FoodApi foodApi;
 
         @SuppressLint("WrongViewCast")
@@ -72,6 +70,7 @@
                     result -> {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             selectedImageUri = result.getData().getData();
+                            foodImagePreview.setVisibility(View.VISIBLE);
                             foodImagePreview.setImageURI(selectedImageUri);
                             uploadImageToServer(selectedImageUri);
                         }
@@ -94,7 +93,6 @@
             categorySpinner = findViewById(R.id.foodCategory);
             typeSpinner = findViewById(R.id.foodType);
 
-            // Set up the category Spinner
             ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(this,
                     R.array.category_array, android.R.layout.simple_spinner_item);
             categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -125,7 +123,6 @@
             });
 
 
-            // Initialize Retrofit
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -138,7 +135,6 @@
                         finish();
                     });
 
-            // Set up the submit button
             submitButton.setOnClickListener(v -> {
                 String foodName = foodNameEditText.getText().toString().trim();
                 String weightStr = foodWeightEditText.getText().toString().trim();
@@ -160,8 +156,8 @@
                     FoodItem foodItem = new FoodItem(foodName, selectedCategory, selectedType, weight
                             , price, quantity, description, imageUrl);
 
-                    // Make the Retrofit POST request
                     addFoodItem(foodItem);
+                    foodImagePreview.setVisibility(View.GONE);
                     Log.d("AddFoodActivity", "Selected Type: " + selectedType);
 
                 }
@@ -197,7 +193,6 @@
             if (filePath != null) {
                 return new File(filePath);
             } else {
-                // If the file path couldn't be resolved, return null or handle gracefully
                 Toast.makeText(this, "Invalid file path", Toast.LENGTH_SHORT).show();
                 return null;
             }
@@ -205,29 +200,24 @@
         private void uploadImageToServer(Uri imageUri) {
             try {
                 File imageFile = getFileFromUri(imageUri);
-                // Convert the URI to a bitmap
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
 
-                // Compress the bitmap to a byte array
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
                 byte[] byteArray = stream.toByteArray();
 
-                // Create the request body
                 RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), byteArray);
 
-                // Prepare the multipart request
                 MultipartBody.Part body = MultipartBody.Part.createFormData("file", imageFile.getName(), requestFile);
 
                 imageFileName = imageFile.getName();
 
-                // Set up Retrofit and make the call
                 Call<ImageResponse> call = foodApi.uploadImage(body);
                 call.enqueue(new Callback<ImageResponse>() {
                     @Override
                     public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            uploadedImageUrl = response.body().getImageUrl(); // URL from the server
+                            uploadedImageUrl = response.body().getImageUrl();
                             Toast.makeText(AddFoodActivity.this, "Image uploaded!", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(AddFoodActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
@@ -278,13 +268,11 @@
                 int price = Integer.parseInt(priceStr);
                 int quantity = Integer.parseInt(quantityStr);
 
-                // Use the server-provided URL of the uploaded image
                 String imageUrl = IMAGE_UPLOAD_URL + imageFileName;
 
                 FoodItem foodItem = new FoodItem(foodName, selectedCategory, selectedType, weight,
                         price, quantity, description, imageUrl);
 
-                // Make the Retrofit POST request
                 addFoodItem(foodItem);
                 Log.d("AddFoodActivity",
                         "imageFileName: " + imageFileName);

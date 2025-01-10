@@ -51,9 +51,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EditFoodActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://192.168.1.11:8080/myfoods_backend/";
+    private static final String BASE_URL = "@string/base_url";
     private static final String IMAGE_UPLOAD_URL =
-            "http://192.168.1.11:8080/myfoods_backend/uploads/";
+            BASE_URL + "uploads/";
     private Spinner categorySpinner, typeSpinner;
     private Uri selectedImageUri;
 
@@ -114,7 +114,6 @@ private Context context;
 
 
 
-        // Retrieve data from the intent
         Intent intent = getIntent();
         int foodId = intent.getIntExtra("food_id", 0);
         String foodName = intent.getStringExtra("food_name");
@@ -177,17 +176,15 @@ private Context context;
                 String updatedCategory = editCategory.getSelectedItem().toString();
                 String updatedType = editType.getSelectedItem().toString();
                 int updatedWeight = Integer.parseInt(editWeight.getText().toString());
-                int updatedPrice = Integer.parseInt(editPrice.getText().toString()); // Parse as double
+                int updatedPrice = Integer.parseInt(editPrice.getText().toString());
                 int updatedQuantity = Integer.parseInt(editQuantity.getText().toString());
                 String updatedDesc = editDesc.getText().toString();
                 String updatedImage = imageFileName;
 
-                // Call updateFoodItem with appropriate parameters
                 updateFoodItem(foodId, updatedName, updatedCategory, updatedType,
                         updatedWeight, updatedPrice, updatedQuantity,
                         updatedDesc, updatedImage);
             } catch (NumberFormatException e) {
-                // Handle invalid input gracefully
                 e.printStackTrace();
                 Toast.makeText(this, "Please enter valid numeric values.", Toast.LENGTH_SHORT).show();
             }
@@ -202,7 +199,6 @@ private Context context;
 
     }
     private void populateTypeSpinner(String selectedCategory){
-//        editType.setClickable(true);
         if (Objects.equals(selectedCategory, "Food")){
             ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this,
                     R.array.food_type_array, android.R.layout.simple_spinner_item);
@@ -220,7 +216,7 @@ private Context context;
                                 String food_type,
                                 int food_weight, int food_price, int food_quantity, String food_desc,
                                 String food_image) {
-        String url = "http://192.168.1.11:8080/myfoods_backend/update_item.php";
+        String url = "@string/base_url" + "update_item.php";
 
         JSONObject jsonParams = new JSONObject();
         try {
@@ -274,7 +270,6 @@ private Context context;
         if (filePath != null) {
             return new File(filePath);
         } else {
-            // If the file path couldn't be resolved, return null or handle gracefully
             Toast.makeText(this, "Invalid file path", Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -283,23 +278,18 @@ private Context context;
     private void uploadImageToServer(Uri imageUri) {
         try {
             File imageFile = getFileFromUri(imageUri);
-            // Convert the URI to a bitmap
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
 
-            // Compress the bitmap to a byte array
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
             byte[] byteArray = stream.toByteArray();
 
-            // Create the request body
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), byteArray);
 
-            // Prepare the multipart request
             MultipartBody.Part body = MultipartBody.Part.createFormData("file", imageFile.getName(), requestFile);
 
             imageFileName = IMAGE_UPLOAD_URL + imageFile.getName();
 
-            // Set up Retrofit and make the call
             Call<ImageResponse> call = foodApi.uploadImage(body);
             call.enqueue(new Callback<ImageResponse>() {
                 @Override
@@ -309,7 +299,7 @@ private Context context;
 
                         Glide.with(EditFoodActivity.this)
                                 .load(uploadedImageUrl)
-                                .placeholder(R.drawable.burger) // Optional placeholder
+                                .placeholder(R.drawable.burger)
                                 .into(foodImagePreview);
 
                         foodImagePreview.setImageURI(selectedImageUri);
