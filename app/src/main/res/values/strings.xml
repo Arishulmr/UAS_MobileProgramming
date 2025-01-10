@@ -1,14 +1,24 @@
 <resources>
     <string name="app_name">myFoods_MohammadKhalilArdhani</string>
     <string-array name="category_array">
-        <item>Vegetarian</item>
-        <item>Non-Vegetarian</item>
-        <item>Vegan</item>
+        <item>Food</item>
+        <item>Beverage</item>
     </string-array>
 
-    <string-array name="type_array">
-        <item>Starter</item>
-        <item>Main Course</item>
-        <item>Dessert</item>
+    <string-array name="food_type_array">
+        <item>Fruits and Vegetables</item>
+        <item>Carbohydrates</item>
+        <item>Proteins</item>
+        <item>Fats and Oils</item>
+    </string-array>
+
+    <string-array name="beverage_type_array">
+        <item>Carbonated</item>
+        <item>Coffee</item>
+        <item>Tea</item>
+        <item>Sports</item>
+        <item>Water</item>
+        <item>Juice</item>
+
     </string-array>
 </resources>

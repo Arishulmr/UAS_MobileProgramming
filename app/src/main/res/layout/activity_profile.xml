@@ -59,23 +59,12 @@
             android:inputType="textEmailAddress"
             android:layout_marginBottom="16dp" />
 
-        <!-- Password Field -->
-        <EditText
-            android:id="@+id/passwordEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password"
-            android:padding="12dp"
-            android:background="@drawable/rounded_input"
-            android:inputType="textPassword"
-            android:layout_marginBottom="24dp" />
 
-        <!-- Register Button -->
         <Button
-            android:id="@+id/registerButton"
+            android:id="@+id/updateButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register"
+            android:text="Update"
             android:background="@drawable/rounded_button"
             android:textColor="#FFFFFF"
             android:layout_marginBottom="16dp" />

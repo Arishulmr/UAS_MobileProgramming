@@ -3,19 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/foodItem"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     android:backgroundTint="@color/material_on_primary_emphasis_medium">
 
-    <!-- Food Image -->
     <ImageView
         android:id="@+id/foodImage"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:background="@drawable/rounded_image"
         android:layout_marginEnd="16dp"
+        android:padding="4dp"
+        android:backgroundTint="#E58F2D"
         tools:ignore="MissingConstraints" />
 
-    <!-- Food Name in a Rounded Container -->
     <FrameLayout
         android:id="@+id/foodNameContainer"
         android:layout_width="0dp"
@@ -37,7 +39,6 @@
             android:padding="8dp"/>
     </FrameLayout>
 
-    <!-- Details Section (Category, Weight, Price, Quantity in one row) -->
     <LinearLayout
         android:id="@+id/foodDetails"
         android:layout_width="0dp"
@@ -50,7 +51,6 @@
         android:weightSum="4"
         android:paddingTop="4dp">
 
-        <!-- Food Category -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="0dp"
@@ -73,7 +73,6 @@
                 android:textColor="#000000"/>
         </LinearLayout>
 
-        <!-- Food Weight -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="0dp"
@@ -96,7 +95,6 @@
                 android:textColor="#000000"/>
         </LinearLayout>
 
-        <!-- Food Price -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="0dp"
@@ -119,7 +117,6 @@
                 android:textColor="#000000"/>
         </LinearLayout>
 
-        <!-- Food Quantity -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="0dp"
@@ -144,7 +141,18 @@
 
     </LinearLayout>
 
-    <!-- Like Button (Star) -->
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/likeButton"
+        app:layout_constraintTop_toBottomOf="@id/foodDetails"
+        android:background="@android:color/holo_red_dark"
+        android:textColor="#FFFFFF" />
     <Button
         android:id="@+id/likeButton"
         android:layout_width="wrap_content"

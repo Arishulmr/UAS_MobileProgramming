@@ -65,8 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:background="@drawable/rounded_input"
-            android:padding="12dp"
-            android:clickable="false"/>
+            android:padding="12dp"/>
 
         <!-- Weight Field -->
         <EditText
@@ -114,10 +113,10 @@
 
         <!-- Submit Button -->
         <Button
-            android:id="@+id/submitFoodButton"
+            android:id="@+id/updateButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Food Item"
+            android:text="Update Food Item"
             android:background="@drawable/rounded_button"
             android:textColor="#FFFFFF" />
         <Button

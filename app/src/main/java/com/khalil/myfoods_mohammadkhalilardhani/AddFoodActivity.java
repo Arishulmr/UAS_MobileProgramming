@@ -29,6 +29,7 @@
     import java.io.IOException;
     import java.io.InputStream;
     import java.io.OutputStream;
+    import java.util.Objects;
 
     import okhttp3.MediaType;
     import okhttp3.MultipartBody;
@@ -41,7 +42,7 @@
 
     public class AddFoodActivity extends AppCompatActivity {
         private static final String IMAGE_UPLOAD_URL =
-                "http://192.168.1.10:8080/myfoods_backend/uploads/"; // Server
+                "http://192.168.1.11:8080/myfoods_backend/uploads/"; // Server
         // upload endpoint
         private ImageView foodImagePreview;
         private Uri selectedImageUri;
@@ -53,7 +54,8 @@
 
         private String selectedCategory, selectedType, imageFileName;
 
-        private static final String BASE_URL = "http://192.168.1.10:8080/myfoods_backend/"; // Your API base URL
+        private static final String BASE_URL = "http://192.168.1.11:8080/myfoods_backend/"; //
+        // Your API base URL
         private FoodApi foodApi;
 
         @SuppressLint("WrongViewCast")
@@ -97,17 +99,11 @@
                     R.array.category_array, android.R.layout.simple_spinner_item);
             categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             categorySpinner.setAdapter(categoryAdapter);
-
-            // Set up the type Spinner
-            ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this,
-                    R.array.type_array, android.R.layout.simple_spinner_item);
-            typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            typeSpinner.setAdapter(typeAdapter);
-
             categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                     selectedCategory = parentView.getItemAtPosition(position).toString();
+                    populateTypeSpinner(selectedCategory);
                 }
 
                 @Override
@@ -170,6 +166,21 @@
 
                 }
             });
+        }
+
+        private void populateTypeSpinner(String selectedCategory){
+            typeSpinner.setClickable(true);
+            if (Objects.equals(selectedCategory, "Food")){
+                ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this,
+                        R.array.food_type_array, android.R.layout.simple_spinner_item);
+                typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                typeSpinner.setAdapter(typeAdapter);
+            } else if (Objects.equals(selectedCategory, "Beverage")) {
+                ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this,
+                        R.array.beverage_type_array, android.R.layout.simple_spinner_item);
+                typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                typeSpinner.setAdapter(typeAdapter);
+            }
         }
 
 
